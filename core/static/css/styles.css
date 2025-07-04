@@ -1,0 +1,54 @@
+body {
+  background-color: #f8f9fa;
+}
+
+.card {
+  border-radius: 1rem;
+}
+
+.btn-primary {
+  background-color: #051317;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #0b2c36;
+}
+
+.hero {
+    padding: 60px 0;
+    text-align: center;
+}
+.search-bar {
+    max-width: 600px;
+    margin: 0 auto 40px;
+}
+
+.league-card {
+    width: 100%;
+    height: 160px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.league-img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    transition: transform 0.3s;
+    cursor: pointer;
+}
+
+.league-img:hover {
+    transform: scale(1.05);
+}
+
+.league-title {
+    margin-top: 10px;
+    font-weight: 600;
+}

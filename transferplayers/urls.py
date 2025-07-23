@@ -26,4 +26,13 @@ urlpatterns = [
     path('admin-panel/', views.admin_view, name='admin_panel'),
     path('player/', views.player_view, name='player'),
     path('admin/', admin.site.urls),
+    path('obtener_jugadores_por_equipo/', views.obtener_jugadores_por_equipo, name='obtener_jugadores_por_equipo'),
+    path('reporte_solicitudes/', views.reporte_solicitudes, name='reporte_solicitudes'),
+    path('obtener_solicitudes/', views.obtener_solicitudes, name='obtener_solicitudes'),
+    path('solicitudes_aprobadas/', views.solicitudes_aprobadas, name='solicitudes_aprobadas'),
+    path('obtener_solicitudes_aprobadas/', views.obtener_solicitudes_aprobadas, name='obtener_solicitudes_aprobadas'),
+    path('usuarios_registrados/', views.usuarios_registrados, name='usuarios_registrados'),
+    path('obtener_usuarios_registrados/', views.obtener_usuarios_registrados, name='obtener_usuarios_registrados'),
+    path('reporte_semanal/', views.reporte_semanal, name='reporte_semanal'),
+    path('obtener_solicitudes_semanales/', views.obtener_solicitudes_semanales, name='obtener_solicitudes_semanales')
 ]

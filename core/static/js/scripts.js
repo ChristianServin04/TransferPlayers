@@ -4,56 +4,56 @@ function verEquipos(liga) {
         premier: {
         nombre: "Premier League",
         equipos: [
-            { nombre: "Manchester City", img: "static/img/Ligas/PremierLeague/ManchesterCity/manchester-city.png" },
-            { nombre: "Manchester United", img: "static/img/Ligas/PremierLeague/ManchesterUnited/manchester-united.png" },
-            { nombre: "Liverpool", img: "static/img/Ligas/PremierLeague/Liverpool/liverpool.png" },
-            { nombre: "Arsenal", img: "static/img/Ligas/PremierLeague/Arsenal/arsenal.png" },
-            { nombre: "Chelsea", img: "static/img/Ligas/PremierLeague/Chelsea/chelsea.png" },
-            { nombre: "Tottenham", img: "static/img/Ligas/PremierLeague/Tottenham/tottenham.png" },
+            { nombre: "Manchester City", imagenes: "static/imagenes/Ligas/PremierLeague/ManchesterCity/manchester-city.png", id: "1" },
+            { nombre: "Manchester United", imagenes: "static/imagenes/Ligas/PremierLeague/ManchesterUnited/manchester-united.png", id: "2" },
+            { nombre: "Liverpool", imagenes: "static/imagenes/Ligas/PremierLeague/Liverpool/liverpool.png", id: "4" },
+            { nombre: "Arsenal", imagenes: "static/imagenes/Ligas/PremierLeague/Arsenal/arsenal.png", id: "3" },
+            { nombre: "Chelsea", imagenes: "static/imagenes/Ligas/PremierLeague/Chelsea/chelsea.png", id: "5" },
+            { nombre: "Tottenham", imagenes: "static/imagenes/Ligas/PremierLeague/Tottenham/tottenham.png", id: "6" },
         ]
         },
         laliga: {
         nombre: "La Liga",
         equipos: [
-            { nombre: "Real Madrid", img: "static/img/Ligas/LaLiga/RealMadrid/real-madrid.png" },
-            { nombre: "Barcelona", img: "static/img/Ligas/LaLiga/Barcelona/barcelona.png" },
-            { nombre: "Atlético de Madrid", img: "static/img/Ligas/LaLiga/AtleticoMadrid/atletico-madrid.png" },
-            { nombre: "Sevilla", img: "static/img/Ligas/LaLiga/Sevilla/sevilla.png" },
-            { nombre: "Athletic Club", img: "static/img/Ligas/LaLiga/AthleticBilbao/athletic-bilbao.png" },
-            { nombre: "Villarreal", img: "static/img/Ligas/LaLiga/Villarreal/villarreal.png" },
+            { nombre: "Real Madrid", imagenes: "static/imagenes/Ligas/LaLiga/RealMadrid/real-madrid.png", id: "7" },
+            { nombre: "Barcelona", imagenes: "static/imagenes/Ligas/LaLiga/Barcelona/barcelona.png", id: "8" },
+            { nombre: "Atlético de Madrid", imagenes: "static/imagenes/Ligas/LaLiga/AtleticoMadrid/atletico-madrid.png", id: "11" },
+            { nombre: "Sevilla", imagenes: "static/imagenes/Ligas/LaLiga/Sevilla/sevilla.png", id: "9" },
+            { nombre: "Athletic Club", imagenes: "static/imagenes/Ligas/LaLiga/AthleticBilbao/athletic-bilbao.png", id: "10" },
+            { nombre: "Villarreal", imagenes: "static/imagenes/Ligas/LaLiga/Villarreal/villarreal.png", id: "12" },
         ]
         },
         bundesliga: {
         nombre: "Bundesliga",
         equipos: [
-            { nombre: "Bayern Múnich", img: "static/img/Ligas/Bundesliga/BayernMunich/bayern-munich.png" },
-            { nombre: "Borussia Dortmund", img: "static/img/Ligas/Bundesliga/BorussiaDortmund/borussia-dortmund.png" },
-            { nombre: "RB Leipzig", img: "static/img/Ligas/Bundesliga/Leipzig/rb-leipzig.png" },
-            { nombre: "Bayer Leverkusen", img: "static/img/Ligas/Bundesliga/BayerLeverkusen/bayer-leverkusen.png" },
-            { nombre: "Eintracht Frankfurt", img: "static/img/Ligas/Bundesliga/EintrachtFrankfurt/eintracht-frankfurt.png" },
-            { nombre: "Wolfsburgo", img: "static/img/Ligas/Bundesliga/Wolfsburgo/wolfsburgo.png" },
+            { nombre: "Bayern Múnich", imagenes: "static/imagenes/Ligas/Bundesliga/BayernMunich/bayern-munich.png", id: "13" },
+            { nombre: "Borussia Dortmund", imagenes: "static/imagenes/Ligas/Bundesliga/BorussiaDortmund/borussia-dortmund.png", id: "15" },
+            { nombre: "RB Leipzig", imagenes: "static/imagenes/Ligas/Bundesliga/Leipzig/rb-leipzig.png", id: "16" },
+            { nombre: "Bayer Leverkusen", imagenes: "static/imagenes/Ligas/Bundesliga/BayerLeverkusen/bayer-leverkusen.png", id: "14" },
+            { nombre: "Eintracht Frankfurt", imagenes: "static/imagenes/Ligas/Bundesliga/EintrachtFrankfurt/eintracht-frankfurt.png", id: "17" },
+            { nombre: "Wolfsburgo", imagenes: "static/imagenes/Ligas/Bundesliga/Wolfsburgo/wolfsburgo.png", id: "18" },
         ]
         },
         seriea: {
         nombre: "Serie A",
         equipos: [
-            { nombre: "Juventus", img: "static/img/Ligas/SerieA/Juventus/juventus.png" },
-            { nombre: "AC Milan", img: "static/img/Ligas/SerieA/AcMilan/ac-milan.png" },
-            { nombre: "Inter de Milan", img: "static/img/Ligas/SerieA/InterMilan/inter-milan.png" },
-            { nombre: "Napoli", img: "static/img/Ligas/SerieA/Napoli/napoli.png" },
-            { nombre: "Roma", img: "static/img/Ligas/SerieA/Roma/roma.png" },
-            { nombre: "Lazio", img: "static/img/Ligas/SerieA/Lazio/lazio.png" },
+            { nombre: "Juventus", imagenes: "static/imagenes/Ligas/SerieA/Juventus/juventus.png", id: "19" },
+            { nombre: "AC Milan", imagenes: "static/imagenes/Ligas/SerieA/AcMilan/ac-milan.png", id: "21" },
+            { nombre: "Inter de Milan", imagenes: "static/imagenes/Ligas/SerieA/InterMilan/inter-milan.png", id: "23" },
+            { nombre: "Napoli", imagenes: "static/imagenes/Ligas/SerieA/Napoli/napoli.png", id: "20" },
+            { nombre: "Roma", imagenes: "static/imagenes/Ligas/SerieA/Roma/roma.png", id: "22" },
+            { nombre: "Lazio", imagenes: "static/imagenes/Ligas/SerieA/Lazio/lazio.png", id: "24" },
         ]
         },
         ligue1: {
         nombre: "Ligue 1",
         equipos: [
-            { nombre: "PSG", img: "static/img/Ligas/Ligue1/PSG/psg.png" },
-            { nombre: "Olympique Lyon", img: "static/img/Ligas/Ligue1/OlympiqueLyon/olympique-lyon.png" },
-            { nombre: "Olympique Marsella", img: "static/img/Ligas/Ligue1/OlympiqueMarsella/olympique-marsella.png" },
-            { nombre: "Lille", img: "static/img/Ligas/Ligue1/Lille/lille.png" },
-            { nombre: "Monaco", img: "static/img/Ligas/Ligue1/ASMonaco/monaco.png" },
-            { nombre: "Stade Rennes", img: "static/img/Ligas/Ligue1/Rennes/rennes.png" },
+            { nombre: "PSG", imagenes: "static/imagenes/Ligas/Ligue1/PSG/psg.png", id: "25" },
+            { nombre: "Olympique Lyon", imagenes: "static/imagenes/Ligas/Ligue1/OlympiqueLyon/olympique-lyon.png", id: "28" },
+            { nombre: "Olympique Marsella", imagenes: "static/imagenes/Ligas/Ligue1/OlympiqueMarsella/olympique-marsella.png", id: "29" },
+            { nombre: "Lille", imagenes: "static/imagenes/Ligas/Ligue1/Lille/lille.png", id: "26" },
+            { nombre: "Monaco", imagenes: "static/imagenes/Ligas/Ligue1/ASMonaco/monaco.png", id: "27" },
+            { nombre: "Stade Rennes", imagenes: "static/imagenes/Ligas/Ligue1/Rennes/rennes.png", id: "30" },
         ]
         }
     };
@@ -67,9 +67,9 @@ function verEquipos(liga) {
         col.className = 'col text-center';
 
         col.innerHTML = `
-            <img src="${equipo.img}" alt="${equipo.nombre}" class="img-fluid rounded shadow-sm equipo-img" 
+            <img src="${equipo.imagenes}" alt="${equipo.nombre}" class="img-fluid rounded shadow-sm equipo-img" 
                 style="max-height: 100px; cursor: pointer;" 
-                onclick="verJugadores('${liga}', '${equipo.nombre}')">
+                onclick="verJugadores('${liga}', '${equipo.id}')">
             <p class="mt-2">${equipo.nombre}</p>
         `;
         contenedor.appendChild(col);
@@ -86,48 +86,300 @@ function verEquipos(liga) {
     }
 }
 
-function verJugadores(liga, equipo) {
-  const jugadoresPorEquipo = {
-    "Manchester City": [
-      { nombre: "Erling Haaland", edad: 23, img: "static/img/Jugadores/Haaland.png" },
-      { nombre: "Kevin De Bruyne", edad: 32, img: "static/img/Jugadores/DeBruyne.png" }
-    ],
-    "Real Madrid": [
-      { nombre: "Jude Bellingham", edad: 20, img: "static/img/Jugadores/Bellingham.png" },
-      { nombre: "Vinícius Jr", edad: 23, img: "static/img/Jugadores/Vinicius.png" }
-    ],
-    // Agrega los demás equipos aquí
-  };
+// function verJugadores(liga, equipo) {
+//     const jugadoresPorEquipo = {
+//         "Manchester City": [
+//         { nombre: "Erling Haaland", edad: 23, img: "static/img/Jugadores/Haaland.png" },
+//         { nombre: "Kevin De Bruyne", edad: 32, img: "static/img/Jugadores/DeBruyne.png" }
+//         ],
+//         "Real Madrid": [
+//         { nombre: "Jude Bellingham", edad: 20, img: "static/img/Jugadores/Bellingham.png" },
+//         { nombre: "Vinícius Jr", edad: 23, img: "static/img/Jugadores/Vinicius.png" }
+//         ],
+//         // Agrega los demás equipos aquí
+//     };
 
-  const jugadores = jugadoresPorEquipo[equipo];
-  const contenedor = document.getElementById('contenedor-jugadores');
-  contenedor.innerHTML = ""; // Limpiar
+//     const jugadores = jugadoresPorEquipo[equipo];
+//     const contenedor = document.getElementById('contenedor-jugadores');
+//     contenedor.innerHTML = ""; // Limpiar
 
-  if (jugadores && jugadores.length > 0) {
-    jugadores.forEach(jugador => {
-      const item = document.createElement('div');
-      item.className = 'list-group-item d-flex align-items-center';
+//     if (jugadores && jugadores.length > 0) {
+//         jugadores.forEach(jugador => {
+//         const item = document.createElement('div');
+//         item.className = 'list-group-item d-flex align-items-center';
 
-      item.innerHTML = `
-        <img src="${jugador.img}" alt="${jugador.nombre}" class="rounded me-3" style="width: 50px; height: 50px;">
-        <div>
-          <strong>${jugador.nombre}</strong><br>
-          <small>Edad: ${jugador.edad}</small>
-        </div>
-      `;
+//         item.innerHTML = `
+//             <img src="${jugador.img}" alt="${jugador.nombre}" class="rounded me-3" style="width: 50px; height: 50px;" />
+//             <div>
+//                 <strong>${jugador.nombre}</strong><br />
+//                 <small>Edad: ${jugador.edad}</small>
+//             </div>
+//         `;
 
-      contenedor.appendChild(item);
+//         contenedor.appendChild(item);
+//         });
+
+//         document.getElementById('jugadoresModalLabel').textContent = `Jugadores de ${equipo}`;
+
+//         const jugadoresModal = new bootstrap.Modal(document.getElementById('jugadoresModal'));
+//         jugadoresModal.show();
+//     } else {
+//         alert(`No se encontraron jugadores para ${equipo}`);
+//     }
+// }
+
+function verJugadores(liga, equipoId) {
+    $.ajax({
+        url: '/obtener_jugadores_por_equipo/',
+        type: 'GET',
+        data: { equipo_id: equipoId },
+        success: function(jugadores) {
+            const contenedor = document.getElementById('contenedor-jugadores');
+            contenedor.innerHTML = ""; // Limpiar
+
+            if (jugadores && jugadores.length > 0) {
+                jugadores.forEach(jugador => {
+                    // Corregir ruta para evitar doble slash
+                    const rutaImg = jugador.img.startsWith('/')
+                        ? `/static${jugador.img}`
+                        : `/static/${jugador.img}`;
+
+                    const item = document.createElement('div');
+                    item.className = 'list-group-item d-flex align-items-center';
+                    item.innerHTML = `
+                        <img src="${rutaImg}" alt="${jugador.nombre}" class="rounded me-3" style="width: 50px; height: 60px;" />
+                        <div>
+                            <strong>${jugador.nombre}</strong><br />
+                            <small>Edad: ${jugador.edad}</small>
+                        </div>
+                    `;
+                    contenedor.appendChild(item);
+                });
+
+                document.getElementById('jugadoresModalLabel').textContent = `Jugadores del equipo`;
+                const jugadoresModal = new bootstrap.Modal(document.getElementById('jugadoresModal'));
+                jugadoresModal.show();
+            } else {
+                alert("No se encontraron jugadores para este equipo.");
+            }
+        },
+        error: function(xhr, status, error) {
+            alert("Error al consultar los jugadores.");
+            console.error("Error:", error);
+        }
     });
-
-    document.getElementById('jugadoresModalLabel').textContent = `Jugadores de ${equipo}`;
-
-    const jugadoresModal = new bootstrap.Modal(document.getElementById('jugadoresModal'));
-    jugadoresModal.show();
-  } else {
-    alert(`No se encontraron jugadores para ${equipo}`);
-  }
 }
+
 
 function ocultar(){
     $("#PaginaM").innerHTML("");
 }
+
+function mostrarToast(mensaje) {
+    $("#toast-mensaje").text(mensaje);
+    const toast = new bootstrap.Toast(document.getElementById('toast-alerta'));
+    toast.show();
+}
+
+function consultarSolicitudes() {
+    event.preventDefault(); // Evita que recargue la página
+
+    const desde = $("#desde").val();
+    const hasta = $("#hasta").val();
+
+    // Validación
+    if (!desde || !hasta) {
+        mostrarToast("Ambas fechas son obligatorias.");
+        return;
+    }
+
+    if (desde > hasta) {
+        mostrarToast("La fecha 'Desde' no puede ser mayor que la fecha 'Hasta'.");
+        return;
+    }
+
+    // Si todo está bien, realiza la consulta
+    $.ajax({
+        url: `/obtener_solicitudes/`,
+        type: 'GET',
+        data: {
+            desde: desde,
+            hasta: hasta
+        },
+        success: function(data) {
+            const $tabla = $("#tabla_registros");
+            $tabla.empty();
+
+            if (data.length === 0) {
+                $tabla.append(`<tr><td colspan="5" class="text-center">No se encontraron registros.</td></tr>`);
+                return;
+            }
+
+            data.forEach(function(solicitud) {
+                const row = `
+                    <tr>
+                        <td>${solicitud.usuario}</td>
+                        <td>${solicitud.jugador}</td>
+                        <td>${solicitud.mensaje}</td>
+                        <td>${solicitud.estado}</td>
+                        <td>${solicitud.fecha}</td>
+                    </tr>`;
+                $tabla.append(row);
+            });
+        },
+        error: function(xhr, status, error) {
+            mostrarToast("Error al consultar las solicitudes.");
+            console.error("Error al consultar:", error);
+        }
+    });
+}
+
+function consultarSolicitudesAprobadas() {
+    event.preventDefault();
+
+    const desde = $("#desde").val();
+    const hasta = $("#hasta").val();
+
+    if (!desde || !hasta) {
+        mostrarToast("Ambas fechas son obligatorias.");
+        return;
+    }
+
+    if (desde > hasta) {
+        mostrarToast("La fecha 'Desde' no puede ser mayor que la fecha 'Hasta'.");
+        return;
+    }
+
+    $.ajax({
+        url: `/obtener_solicitudes_aprobadas/`,
+        type: 'GET',
+        data: {
+            desde: desde,
+            hasta: hasta
+        },
+        success: function(data) {
+            const $tabla = $("#tabla_registros_aprobadas");
+            $tabla.empty();
+
+            if (data.length === 0) {
+                $tabla.append(`<tr><td colspan="3" class="text-center">No se encontraron registros.</td></tr>`);
+                return;
+            }
+
+            data.forEach(function(solicitud) {
+                const row = `
+                    <tr>
+                        <td>${solicitud.total}</td>
+                        <td>${solicitud.fecha}</td>
+                        <td>${solicitud.estado}</td>
+                    </tr>`;
+                $tabla.append(row);
+            });
+        },
+        error: function(xhr, status, error) {
+            mostrarToast("Error al consultar las solicitudes aprobadas.");
+            console.error("Error:", error);
+        }
+    });
+}
+
+
+function consultarUsuariosRegistrados() {
+    event.preventDefault();
+
+    const desde = $("#desde").val();
+    const hasta = $("#hasta").val();
+
+    if (!desde || !hasta) {
+        mostrarToast("Ambas fechas son obligatorias.");
+        return;
+    }
+
+    if (desde > hasta) {
+        mostrarToast("La fecha 'Desde' no puede ser mayor que la fecha 'Hasta'.");
+        return;
+    }
+
+    $.ajax({
+        url: `/obtener_usuarios_registrados/`,
+        type: 'GET',
+        data: {
+            desde: desde,
+            hasta: hasta
+        },
+        success: function(data) {
+            const $tabla = $("#tabla_usuarios");
+            $tabla.empty();
+
+            if (data.length === 0) {
+                $tabla.append(`<tr><td colspan="4" class="text-center">No se encontraron registros.</td></tr>`);
+                return;
+            }
+
+            data.forEach(function(usuario) {
+                const row = `
+                    <tr>
+                        <td>${usuario.nombre}</td>
+                        <td>${usuario.tipo}</td>
+                        <td>${usuario.fecha}</td>
+                    </tr>`;
+                $tabla.append(row);
+            });
+        },
+        error: function(xhr, status, error) {
+            mostrarToast("Error al consultar los usuarios registrados.");
+            console.error("Error:", error);
+        }
+    });
+}
+
+
+function consultarSolicitudesSemanales() {
+    event.preventDefault();
+
+    const desde = $("#desde").val();
+    const hasta = $("#hasta").val();
+
+    if (!desde || !hasta) {
+        mostrarToast("Ambas fechas son obligatorias.");
+        return;
+    }
+
+    if (desde > hasta) {
+        mostrarToast("La fecha 'Desde' no puede ser mayor que la fecha 'Hasta'.");
+        return;
+    }
+
+    $.ajax({
+        url: `/obtener_solicitudes_semanales/`,
+        type: 'GET',
+        data: {
+            desde: desde,
+            hasta: hasta
+        },
+        success: function(data) {
+            const $tabla = $("#tabla_semanal");
+            $tabla.empty();
+
+            if (data.length === 0) {
+                $tabla.append(`<tr><td colspan="3" class="text-center">No se encontraron registros.</td></tr>`);
+                return;
+            }
+
+            data.forEach(function(registro) {
+                const row = `
+                    <tr>
+                        <td>${registro.semana}</td>
+                        <td>${registro.anio}</td>
+                        <td>${registro.total}</td>
+                    </tr>`;
+                $tabla.append(row);
+            });
+        },
+        error: function(xhr, status, error) {
+            mostrarToast("Error al consultar las solicitudes semanales.");
+            console.error("Error:", error);
+        }
+    });
+}
+

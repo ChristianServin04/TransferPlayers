@@ -34,5 +34,7 @@ urlpatterns = [
     path('usuarios_registrados/', views.usuarios_registrados, name='usuarios_registrados'),
     path('obtener_usuarios_registrados/', views.obtener_usuarios_registrados, name='obtener_usuarios_registrados'),
     path('reporte_semanal/', views.reporte_semanal, name='reporte_semanal'),
-    path('obtener_solicitudes_semanales/', views.obtener_solicitudes_semanales, name='obtener_solicitudes_semanales')
+    path('obtener_solicitudes_semanales/', views.obtener_solicitudes_semanales, name='obtener_solicitudes_semanales'),
+    path('graficas_tactico/', views.vista_graficas, name='graficas_tactico'),
+    path('reporte_datos/<str:tipo>/', views.reporte_datos, name='reporte_datos')
 ]

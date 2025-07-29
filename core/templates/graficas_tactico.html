@@ -3,86 +3,68 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Solicitudes Aprobadas</title>
+    <title>Gráficas Nivel Táctico</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="{% static 'js/scripts.js' %}"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        #canvas-container {
+            max-width: 900px;
+            margin: auto;
+            overflow-x: auto;
+        }
+
+        #grafico {
+            width: 100% !important;
+            max-height: 400px;
+            aspect-ratio: 3 / 2;
+        }
+    </style>
 </head>
 <body class="bg-light">
-
     <!-- Barra de navegación -->
     <nav class="navbar navbar-expand-lg" style="background-color:rgba(5,19,23,255);">
         <div class="container">
-        <img src="{% static 'img/LogoTransferPlayer.png' %}" alt="Transfer Players Logo" class="logo" style="width:80px;">
+        <img src="{% static 'imagenes/LogoTransferPlayer.png' %}" alt="Transfer Players Logo" class="logo" style="width:80px;">
         <a class="navbar-brand" href="{% url 'home' %}" style="color: antiquewhite; font-weight: 600;">Transfer Players</a>
         </div>
     </nav>
 
-    <div class="container mt-5 bg-white p-4 shadow rounded">
+    <div class="container mt-5 bg-white p-4 shadow rounded" style="max-width: 960px;">
+        <h3 class="mb-4">Visualización de Reportes</h3>
 
-        <h3 class="mb-4">Reporte de Solicitudes Aprobadas</h3>
+        <div class="row align-items-end mb-4">
+            <!-- Select de tipo de reporte -->
+            <div class="col-md-6">
+                <label for="tipo_reporte" class="form-label">Selecciona un reporte:</label>
+                <select id="tipo_reporte" class="form-select">
+                    <option value="">-- Selecciona --</option>
+                    <option value="edad_equipo">Edad promedio por equipo</option>
+                    <option value="nacionalidades">Top nacionalidades</option>
+                    <option value="valor_liga">Valor promedio por liga</option>
+                    <option value="top_usuarios">Top 10 usuarios</option>
+                </select>
+            </div>
 
-        <!-- Filtros -->
-        <div class="bg-black text-white px-3 py-2 rounded-top">
-            <strong>Filtros</strong>
-        </div>
-        <div class="border border-top-0 p-3 mb-4 rounded-bottom">
-            <form class="row g-3">
-                <div class="col-md-3">
-                    <label for="desde" class="form-label">Desde:</label>
-                    <input type="date" class="form-control" id="desde" name="desde">
-                </div>
-                <div class="col-md-3">
-                    <label for="hasta" class="form-label">Hasta:</label>
-                    <input type="date" class="form-control" id="hasta" name="hasta">
-                </div>
-                <div class="col-md-3" hidden>
-                    <label for="estado" class="form-label">Estado:</label>
-                    <select class="form-select" id="estado" name="estado">
-                        <option selected>TODOS</option>
-                        <option>Aceptada</option>
-                        <option>Pendiente</option>
-                        <option>Rechazada</option>
-                    </select>
-                </div>
-                <div class="col-md-3 d-flex align-items-end gap-2">
-                    <button type="submit" class="btn btn-primary" onclick="consultarSolicitudesAprobadas()">Buscar</button>
-                </div>
-            </form>
-        </div>
-        
+            <!-- Input del Top N (se muestra solo si aplica) -->
+            <div id="top_n_input" class="col-md-3" style="display: none;">
+                <label for="top_n" class="form-label">Top:</label>
+                <input type="number" id="top_n" class="form-control" value="7" min="1" max="50">
+            </div>
 
-        <!-- Tabla -->
-        <div class="bg-black text-white px-3 py-2 rounded-top">
-            <strong>Registros de Solicitudes</strong>
+            <!-- Botón -->
+            <div class="col-md-3">
+                <button id="btn-generar" class="btn btn-primary w-100">Buscar</button>
+            </div>
         </div>
-        <div class="table-responsive border border-top-0 rounded-bottom" style="max-height: 400px; overflow-y: auto;">
-            <table class="table table-bordered table-striped mb-0">
-                <thead class="table-light">
-                    <tr class="text-center">
-                        <th>Total Solicitudes</th>
-                        <th>Fecha</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody id="tabla_registros_aprobadas">
-                </tbody>
-            </table>
+
+
+        <div id="canvas-container">
+            <canvas id="grafico"></canvas>
         </div>
     </div>
-<!-- Toast -->
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
-  <div id="toast-alerta" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body" id="toast-mensaje">
-        <!-- Mensaje dinámico -->
-      </div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
-    </div>
-  </div>
-</div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'js/scripts.js' %}"></script>
 </body>
-
 </html>

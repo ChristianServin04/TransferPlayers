@@ -4,6 +4,12 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 import psycopg2
 from datetime import datetime
+from .graficas import (
+    obtener_datos_edad_equipo,
+    obtener_datos_nacionalidades,
+    obtener_datos_valor_liga,
+    obtener_datos_top_usuarios,
+)
 # from .models import DetalleJugador
 
 def home_view(request):
@@ -32,6 +38,9 @@ def usuarios_registrados(request):
 
 def reporte_semanal(request):
     return render(request, 'reporte_semanal.html')
+
+def vista_graficas(request):
+    return render(request, 'graficas_tactico.html')
 
 @require_GET
 def obtener_jugadores_por_equipo(request):
@@ -228,3 +237,25 @@ def obtener_solicitudes_semanales(request):
     except Exception as e:
         print("Error en la consulta semanal:", e)
         return JsonResponse([], safe=False)
+
+def reporte_datos(request, tipo):
+    if tipo == "nacionalidades":
+        top_n = request.GET.get("top_n", 7)
+        try:
+            top_n = int(top_n)
+            if top_n < 1 or top_n > 50:  # opcional: límite superior
+                top_n = 7
+        except ValueError:
+            top_n = 7
+        datos = obtener_datos_nacionalidades(top_n)
+    elif tipo == "edad_equipo":
+        datos = obtener_datos_edad_equipo()
+    elif tipo == "valor_liga":
+        datos = obtener_datos_valor_liga()
+    elif tipo == "top_usuarios":
+        datos = obtener_datos_top_usuarios()
+    else:
+        datos = {}
+
+    return JsonResponse(datos)
+

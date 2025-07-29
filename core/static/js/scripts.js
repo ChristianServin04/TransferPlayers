@@ -383,3 +383,110 @@ function consultarSolicitudesSemanales() {
     });
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    const selectReporte = document.getElementById("tipo_reporte");
+    const topNInput = document.getElementById("top_n_input");
+
+    selectReporte.addEventListener("change", function () {
+        const selected = this.value;
+        // Mostrar input si es "nacionalidades"
+        if (selected === "nacionalidades") {
+            document.getElementById("parametros_extra").style.display = "flex";
+            topNInput.style.display = "block";
+        } else {
+            topNInput.style.display = "none";
+            document.getElementById("parametros_extra").style.display = "none";
+        }
+    });
+
+    document.getElementById("btn-generar").addEventListener("click", generarGrafica);
+});
+
+
+
+window.generarGrafica = function () {
+    const tipo = document.getElementById("tipo_reporte").value;
+    if (!tipo) return;
+
+    let url = `/reporte_datos/${tipo}/`;
+
+    // Si el tipo es nacionalidades, agregar el top_n
+    if (tipo === "nacionalidades") {
+        const topN = document.getElementById("top_n").value || 7;
+        url += `?top_n=${topN}`;
+    }
+
+    $.ajax({
+        url: url,
+        type: "GET",
+        success: function(data) {
+            renderChart(tipo, data);
+        },
+        error: function() {
+            alert("Ocurrió un error al cargar los datos del reporte.");
+        }
+    });
+};
+
+
+
+let chartInstance = null;
+
+function renderChart(tipo, data) {
+    const ctx = document.getElementById("grafico").getContext("2d");
+    if (chartInstance) chartInstance.destroy();
+
+    let config = {};
+
+    if (tipo === "edad_equipo") {
+        config = {
+            type: 'bar',
+            data: {
+                labels: data.equipos,
+                datasets: [{
+                    label: 'Edad Promedio',
+                    data: data.edades,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                }]
+            }
+        };
+    } else if (tipo === "nacionalidades") {
+        config = {
+            type: 'pie',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    data: data.values,
+                    backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56', '#33cc33']
+                }]
+            }
+        };
+    } else if (tipo === "valor_liga") {
+        config = {
+            type: 'line',
+            data: {
+                labels: data.ligas,
+                datasets: [{
+                    label: 'Valor Promedio (€)',
+                    data: data.valores,
+                    borderColor: 'green',
+                    fill: false
+                }]
+            }
+        };
+    } else if (tipo === "top_usuarios") {
+        config = {
+            type: 'bar',
+            data: {
+                labels: data.usuarios,
+                datasets: [{
+                    label: 'Solicitudes',
+                    data: data.solicitudes,
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)'
+                }]
+            }
+        };
+    }
+
+    chartInstance = new Chart(ctx, config);
+}

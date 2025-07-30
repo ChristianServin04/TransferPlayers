@@ -11,7 +11,7 @@
     <!-- Barra de navegación -->
     <nav class="navbar navbar-expand-lg" style="background-color:rgba(5,19,23,255);">
         <div class="container">
-        <img src="{% static 'img/LogoTransferPlayer.png' %}" alt="Transfer Players Logo" class="logo" style="width:80px;">
+        <img src="{% static 'imagenes/LogoTransferPlayer.png' %}" alt="Transfer Players Logo" class="logo" style="width:80px;">
         <a class="navbar-brand" href="{% url 'home' %}" style="color: antiquewhite; font-weight: 600;">Transfer Players</a>
         </div>
     </nav>
@@ -46,18 +46,8 @@
                         <td>{{ player.edad }} años</td>
                     </tr>
                     <tr>
-                        <th class="text-secondary">Estado:</th>
-                        <td>
-                            {% if player.activo %}
-                                <span class="badge bg-success">Activo</span>
-                            {% else %}
-                                <span class="badge bg-secondary">Inactivo</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    <tr>
                         <th class="fs-5 text-primary">Valor de Mercado:</th>
-                        <td class="fs-5 fw-bold text-primary">{{ player.valor_mercado }} €</td>
+                        <td class="fs-5 fw-bold text-primary">{{ player.valor_mercado }} mill. €</td>
                     </tr>
                 </table>
             </div>

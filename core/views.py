@@ -59,7 +59,7 @@ def obtener_jugadores_por_equipo(request):
         cursor.execute(query, (equipo_id,))
         resultados = cursor.fetchall()
         jugadores = [
-            {"nombre": fila[0], "edad": fila[1], "img": fila[2]}
+            {"nombre": fila[0], "edad": fila[1], "img": fila[2], "id": fila[3]}
             for fila in resultados
         ]
         cursor.close()
@@ -70,27 +70,68 @@ def obtener_jugadores_por_equipo(request):
         return JsonResponse([], safe=False)
 
 def player_view(request, id):
-    # Simulación (esto normalmente lo traerías de la BD)
-    jugador = {
-        "nombre": "Erling Haaland",
-        "imagen": "img/Jugadores/Haaland.png",
-        "equipo": "Manchester City",
-        "posicion": "Delantero",
-        "nacionalidad": "Noruega",
-        "edad": 23,
-        "activo": True,
-        "valor_mercado": "180M",
-        "estadisticas": [
-            {"temporada": "2023/24", "partidos": 36, "goles": 27, "asistencias": 6},
-            {"temporada": "2022/23", "partidos": 35, "goles": 36, "asistencias": 8}
-        ]
-    }
-    return render(request, "player.html", {"player": jugador})
+    try:
+        conexion = conectar()
+        cursor = conexion.cursor()
+
+        # Consulta principal de información del jugador
+        cursor.execute("""
+            SELECT dj.foto, j.nombre, e.nombre,dj.posicion,j.nacionalidad,j.edad,dj.valor_mercado 
+            FROM public.detalle_jugador dj INNER JOIN public.jugador j 
+            ON (j.id_jugador = dj.id_jugador )
+            INNER JOIN public.equipos e ON (e.id_equipo = dj.id_equipo)
+            WHERE dj.id_jugador = %s
+        """, (id,))
+        jugador_row = cursor.fetchone()
+
+        if not jugador_row:
+            return render(request, "player.html", {"player": None})
+
+        # Mapeo de los datos
+        jugador = {
+            "imagen": jugador_row[0],          # dj.foto
+            "nombre": jugador_row[1],          # j.nombre
+            "equipo": jugador_row[2],          # e.nombre
+            "posicion": jugador_row[3],        # dj.posicion
+            "nacionalidad": jugador_row[4],    # j.nacionalidad
+            "edad": jugador_row[5],            # j.edad
+            "valor_mercado": jugador_row[6],   # dj.valor_mercado
+        }
+
+
+        # Consulta de estadísticas
+        # cursor.execute("""
+        #     SELECT temporada, partidos, goles, asistencias
+        #     FROM estadistica_jugador
+        #     WHERE id_jugador = %s
+        #     ORDER BY temporada DESC
+        # """, (id,))
+        # estadisticas_rows = cursor.fetchall()
+
+        # jugador["estadisticas"] = [
+        #     {
+        #         "temporada": row[0],
+        #         "partidos": row[1],
+        #         "goles": row[2],
+        #         "asistencias": row[3]
+        #     } for row in estadisticas_rows
+        # ]
+
+        cursor.close()
+        conexion.close()
+
+        print("Jugador:", jugador)
+
+        return render(request, "player.html", {"player": jugador})
+
+    except Exception as e:
+        print("Error al obtener datos del jugador:", e)
+        return render(request, "player.html", {"player": None})
 
 
 def conectar():
     return psycopg2.connect(
-        host="128.0.194.53",            # 128.0.194.53 o 192.168.1.11
+        host="192.168.1.11",            # 128.0.194.53 o 192.168.1.11
         database="bdTransferP",  # reemplaza por el nombre real
         user="postgres",           # el que usas en pgAdmin
         password="admin",    # tu contraseña

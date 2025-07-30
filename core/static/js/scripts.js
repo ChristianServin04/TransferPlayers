@@ -147,11 +147,13 @@ function verJugadores(liga, equipoId) {
                     const item = document.createElement('div');
                     item.className = 'list-group-item d-flex align-items-center';
                     item.innerHTML = `
-                        <img src="${rutaImg}" alt="${jugador.nombre}" class="rounded me-3" style="width: 50px; height: 60px;" />
-                        <div>
-                            <strong>${jugador.nombre}</strong><br />
-                            <small>Edad: ${jugador.edad}</small>
-                        </div>
+                        <a href="/jugador/${jugador.id}" style="text-decoration: none; color: inherit;">
+                            <img src="${rutaImg}" alt="${jugador.nombre}" class="rounded me-3" style="width: 50px; height: 60px;" />
+                            <div>
+                                <strong>${jugador.nombre}</strong><br />
+                                <small>Edad: ${jugador.edad}</small>
+                            </div>
+                        </a>
                     `;
                     contenedor.appendChild(item);
                 });

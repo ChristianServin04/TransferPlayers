@@ -78,7 +78,7 @@ DATABASES = {
         'NAME': 'bdTransferP',
         'USER': 'postgres',
         'PASSWORD': 'admin',
-        'HOST': '128.0.194.53',  # 128.0.194.53 o 192.168.1.11
+        'HOST': '192.168.1.11',  # 128.0.194.53 o 192.168.1.11
         'PORT': '5432',
     }
 }

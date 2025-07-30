@@ -24,7 +24,7 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('register/', views.register_view, name='register'),
     path('admin-panel/', views.admin_view, name='admin_panel'),
-    path('player/', views.player_view, name='player'),
+    path("jugador/<int:id>/", views.player_view, name="jugador"),
     path('admin/', admin.site.urls),
     path('obtener_jugadores_por_equipo/', views.obtener_jugadores_por_equipo, name='obtener_jugadores_por_equipo'),
     path('reporte_solicitudes/', views.reporte_solicitudes, name='reporte_solicitudes'),

@@ -11,11 +11,7 @@ from django.shortcuts import render
 def conectar():
     try:
         conexion = psycopg2.connect(
-<<<<<<< HEAD
-            host="192.168.1.11",
-=======
-            host="128.0.2.215",
->>>>>>> fb25cff (Se añadieron imágenes y mejoras al diseño)
+            host="192.168.1.36",
             database="bdTransferP",
             user="postgres",
             password="admin",
@@ -123,4 +119,3 @@ def obtener_datos_top_usuarios():
     usuarios = [fila[0] for fila in resultados]
     solicitudes = [fila[1] for fila in resultados]
     return {"usuarios": usuarios, "solicitudes": solicitudes}
-

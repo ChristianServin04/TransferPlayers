@@ -11,7 +11,11 @@ from django.shortcuts import render
 def conectar():
     try:
         conexion = psycopg2.connect(
+<<<<<<< HEAD
             host="192.168.1.11",
+=======
+            host="128.0.2.215",
+>>>>>>> fb25cff (Se añadieron imágenes y mejoras al diseño)
             database="bdTransferP",
             user="postgres",
             password="admin",

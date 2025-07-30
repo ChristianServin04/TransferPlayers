@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-atu4sz0h65uckq5k#9ah!f-4jm^k)f9rn4ra9z^&dd^o^rc-l^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+<<<<<<< HEAD
 ALLOWED_HOSTS = []
+=======
+ALLOWED_HOSTS = ['128.0.2.215', 'localhost', '127.0.0.1']
+>>>>>>> fb25cff (Se añadieron imágenes y mejoras al diseño)
 
 
 # Application definition
@@ -78,12 +82,20 @@ DATABASES = {
         'NAME': 'bdTransferP',
         'USER': 'postgres',
         'PASSWORD': 'admin',
+<<<<<<< HEAD
         'HOST': '192.168.1.11',  # 128.0.194.53 o 192.168.1.11
+=======
+        'HOST': '128.0.2.215',
+>>>>>>> fb25cff (Se añadieron imágenes y mejoras al diseño)
         'PORT': '5432',
     }
 }
 
+<<<<<<< HEAD
 # Base de datos local
+=======
+# Base de datos local (comentada, como en el original)
+>>>>>>> fb25cff (Se añadieron imágenes y mejoras al diseño)
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
@@ -132,4 +144,8 @@ STATICFILES_DIRS = [ BASE_DIR / 'core/static' ]  # si los estáticos están en t
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
+<<<<<<< HEAD
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+=======
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+>>>>>>> fb25cff (Se añadieron imágenes y mejoras al diseño)

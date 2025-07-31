@@ -100,12 +100,12 @@ def player_view(request, id):
         conexion = conectar()
         cursor = conexion.cursor()
 
-        # Consulta principal de información del jugador
+        # Consulta principal de información del jugador con joins
         cursor.execute("""
-            SELECT dj.foto, j.nombre, e.nombre,dj.posicion,j.nacionalidad,j.edad,dj.valor_mercado 
-            FROM public.detalle_jugador dj INNER JOIN public.jugador j 
-            ON (j.id_jugador = dj.id_jugador )
-            INNER JOIN public.equipos e ON (e.id_equipo = dj.id_equipo)
+            SELECT dj.foto, j.nombre, e.nombre, dj.posicion, j.nacionalidad, j.edad, dj.valor_mercado 
+            FROM public.detalle_jugador dj 
+            INNER JOIN public.jugador j ON j.id_jugador = dj.id_jugador
+            INNER JOIN public.equipos e ON e.id_equipo = dj.id_equipo
             WHERE dj.id_jugador = %s
         """, (id,))
         jugador_row = cursor.fetchone()
@@ -113,7 +113,7 @@ def player_view(request, id):
         if not jugador_row:
             return render(request, "player.html", {"player": None})
 
-        # Mapeo de los datos
+        # Diccionario base del jugador
         jugador = {
             "imagen": jugador_row[0],          # dj.foto
             "nombre": jugador_row[1],          # j.nombre
@@ -124,34 +124,40 @@ def player_view(request, id):
             "valor_mercado": jugador_row[6],   # dj.valor_mercado
         }
 
+        # Número de partidos jugados desde la función personalizada
+        cursor.execute("SELECT * FROM public.partidos(%s)", (id,))
+        resultado_partidos = cursor.fetchone()
+        num_partidos = resultado_partidos[0] if resultado_partidos else 0
 
-        # Consulta de estadísticas
-        # cursor.execute("""
-        #     SELECT temporada, partidos, goles, asistencias
-        #     FROM estadistica_jugador
-        #     WHERE id_jugador = %s
-        #     ORDER BY temporada DESC
-        # """, (id,))
-        # estadisticas_rows = cursor.fetchall()
+        # Goles y asistencias desde historial_partido
+        cursor.execute("""
+            SELECT COALESCE(SUM(goles), 0), COALESCE(SUM(asistencias), 0)
+            FROM historial_partido
+            WHERE id_jugador = %s AND status = 1
+        """, (id,))
+        resultado_estadisticas = cursor.fetchone()
+        num_goles = resultado_estadisticas[0] if resultado_estadisticas else 0
+        num_asistencias = resultado_estadisticas[1] if resultado_estadisticas else 0
 
-        # jugador["estadisticas"] = [
-        #     {
-        #         "temporada": row[0],
-        #         "partidos": row[1],
-        #         "goles": row[2],
-        #         "asistencias": row[3]
-        #     } for row in estadisticas_rows
-        # ]
+        # Agregar estadísticas al jugador
+        jugador["estadisticas"] = {
+            "partidos": num_partidos,
+            "goles": num_goles,
+            "asistencias": num_asistencias
+        }
 
         cursor.close()
         conexion.close()
 
         print("Jugador:", jugador)
-
+        
         return render(request, "player.html", {"player": jugador})
 
     except Exception as e:
-        print("Error al obtener datos del jugador:", e)
+        messages.error(request, f"Error al obtener datos del jugador: {e}")
+
+        print("Jugador:", jugador)
+
         return render(request, "player.html", {"player": None})
 
 
@@ -566,7 +572,7 @@ def agregar_jugador(request):
 
         imagen_ruta = ""
         if imagen:
-            ruta_carpeta = os.path.join(settings.BASE_DIR, 'static', 'imagenes', 'jugadores')
+            ruta_carpeta = os.path.join(settings.BASE_DIR, 'core', 'static', 'imagenes', 'jugadores')
             os.makedirs(ruta_carpeta, exist_ok=True)
             nombre_archivo = imagen.name
             ruta_completa = os.path.join(ruta_carpeta, nombre_archivo)

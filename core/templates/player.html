@@ -60,27 +60,26 @@
         <table class="table table-striped text-center">
             <thead class="table-dark">
                 <tr>
-                    <th>Temporada</th>
                     <th>Partidos</th>
                     <th>Goles</th>
                     <th>Asistencias</th>
                 </tr>
             </thead>
             <tbody>
-                {% for registro in player.estadisticas %}
+                {% if player.estadisticas.partidos or player.estadisticas.goles or player.estadisticas.asistencias %}
                 <tr>
-                    <td>{{ registro.temporada }}</td>
-                    <td>{{ registro.partidos }}</td>
-                    <td>{{ registro.goles }}</td>
-                    <td>{{ registro.asistencias }}</td>
+                    <td>{{ player.estadisticas.partidos }}</td>
+                    <td>{{ player.estadisticas.goles }}</td>
+                    <td>{{ player.estadisticas.asistencias }}</td>
                 </tr>
-                {% empty %}
+                {% else %}
                 <tr>
-                    <td colspan="4">Sin datos disponibles</td>
+                    <td colspan="3">Sin datos disponibles</td>
                 </tr>
-                {% endfor %}
+                {% endif %}
             </tbody>
         </table>
+
     </div>
 
 </body>

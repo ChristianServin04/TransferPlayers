@@ -72,25 +72,28 @@ WSGI_APPLICATION = 'transferplayers.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'bdTransferP',
+#         'USER': 'postgres',
+#         'PASSWORD': 'admin',
+#         'HOST': '128.0.194.53',  # 128.0.194.53 o 192.168.1.11
+#         'PORT': '5432',
+#     }
+# }
+
+# Base de datos local
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'bdTransferP',
         'USER': 'postgres',
         'PASSWORD': 'admin',
-        'HOST': '192.168.1.11',  # 128.0.194.53 o 192.168.1.11
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
-
-# Base de datos local
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

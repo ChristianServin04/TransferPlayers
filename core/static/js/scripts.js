@@ -492,3 +492,160 @@ function renderChart(tipo, data) {
 
     chartInstance = new Chart(ctx, config);
 }
+
+
+function buscarJugadoresDinamico() {
+    const inputBuscar = document.getElementById("buscar-jugador");
+    const resultadosContainer = document.getElementById("resultados-busqueda");
+
+    if (!inputBuscar || !resultadosContainer) {
+        console.error("Elementos no encontrados: inputBuscar o resultadosContainer");
+        return;
+    }
+
+    inputBuscar.addEventListener("input", function () {
+        const query = inputBuscar.value.trim();
+
+        if (query.length < 2) {
+            resultadosContainer.innerHTML = "";
+            return;
+        }
+
+        $.ajax({
+            url: "/buscar_jugadores/",
+            data: { q: query },
+            success: function (data) {
+                resultadosContainer.innerHTML = "";
+
+                if (!data || data.length === 0) {
+                    resultadosContainer.innerHTML = "<div class='list-group-item'>Sin resultados</div>";
+                    return;
+                }
+
+                data.forEach(jugador => {
+                    const rutaImg = jugador.img.startsWith('/')
+                        ? `/static${jugador.img}`
+                        : `/static/${jugador.img}`;
+
+                    const item = document.createElement("a");
+                    item.href = `/jugador/${jugador.id}`;
+                    item.className = "list-group-item list-group-item-action d-flex align-items-center";
+                    item.innerHTML = `
+                        <img src="${rutaImg}" class="rounded me-3" style="width: 40px; height: 50px;">
+                        <div>
+                            <strong>${jugador.nombre}</strong><br>
+                            <small>Edad: ${jugador.edad}</small>
+                        </div>
+                    `;
+                    resultadosContainer.appendChild(item);
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Error en AJAX:", status, error);
+            }
+        });
+    });
+
+    // Ocultar los resultados al dar click fuera del input
+    document.addEventListener("click", function (e) {
+        if (!inputBuscar.contains(e.target) && !resultadosContainer.contains(e.target)) {
+            resultadosContainer.innerHTML = "";
+        }
+    });
+}
+
+// Llamar la función al cargar el DOM
+document.addEventListener("DOMContentLoaded", buscarJugadoresDinamico);
+
+
+function filtrarPorEstatus() {
+  const estatus = document.getElementById('filtroEstatus').value;
+  console.log('Filtro:', estatus);
+  window.location.href = `?estatus=${estatus}`;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var modal = document.getElementById('modalRegistrosJugador');
+    modal.addEventListener('show.bs.modal', function (event) {
+    var button = event.relatedTarget;
+    var idJugador = button.getAttribute('data-id');
+    var input = modal.querySelector('#inputIdJugador');
+    input.value = idJugador;
+    console.log('ID jugador:', idJugador);
+  });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  var modal = document.getElementById('modalModificarJugador');
+  modal.addEventListener('show.bs.modal', function (event) {
+    var button = event.relatedTarget;
+    document.getElementById('modificarIdJugador').value = button.getAttribute('data-id');
+    document.getElementById('modificarNombre').value = button.getAttribute('data-nombre');
+    document.getElementById('modificarEdad').value = button.getAttribute('data-edad');
+    document.getElementById('modificarPosicion').value = button.getAttribute('data-posicion');
+    document.getElementById('modificarValor').value = button.getAttribute('data-valor');
+    document.getElementById('modificarEquipo').value = button.getAttribute('data-equipo');
+    document.getElementById('modificarFecha').value = button.getAttribute('data-fecha');
+  });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  var bajaModal = document.getElementById('modalDarDeBajaJugador');
+  bajaModal.addEventListener('show.bs.modal', function (event) {
+    var button = event.relatedTarget;
+    var idJugador = button.getAttribute('data-id');
+    bajaModal.querySelector('#bajaIdJugador').value = idJugador;
+  });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  var altaModal = document.getElementById('modalDarDeAltaJugador');
+  altaModal.addEventListener('show.bs.modal', function (event) {
+    var button = event.relatedTarget;
+    var idJugador = button.getAttribute('data-id');
+    altaModal.querySelector('#altaIdJugador').value = idJugador;
+  });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+  toastElList.forEach(function (toastEl) {
+    var toast = new bootstrap.Toast(toastEl);
+    toast.show();
+  });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  const inputEquipo = document.getElementById('inputEquipo');
+  const resultados = document.getElementById('resultadosEquipos');
+
+  inputEquipo.addEventListener('input', function() {
+    const query = this.value;
+    if (query.length < 2) {
+      resultados.innerHTML = '';
+      return;
+    }
+    fetch(`/buscar_equipos/?q=${encodeURIComponent(query)}`)
+      .then(response => response.json())
+      .then(data => {
+        resultados.innerHTML = '';
+        data.forEach(nombre => {
+          const item = document.createElement('button');
+          item.type = 'button';
+          item.className = 'list-group-item list-group-item-action bg-white';
+          item.textContent = nombre;
+          item.onclick = function() {
+            inputEquipo.value = nombre;
+            resultados.innerHTML = '';
+          };
+          resultados.appendChild(item);
+        });
+      });
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!inputEquipo.contains(e.target) && !resultados.contains(e.target)) {
+      resultados.innerHTML = '';
+    }
+  });
+});

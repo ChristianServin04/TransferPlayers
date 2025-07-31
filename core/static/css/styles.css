@@ -16,41 +16,77 @@ body {
 }
 
 .hero {
-    padding: 60px 0;
-    text-align: center;
+  padding: 60px 0;
+  text-align: center;
 }
+
 .search-bar {
-    max-width: 600px;
-    margin: 0 auto 40px;
+  max-width: 600px;
+  margin: 0 auto 40px;
+}
+
+.input-group.position-relative {
+  display: flex;
+  align-items: center;
+  border: 2px solid #bfc8d6;
+  border-radius: 8px;
+  background: #fff;
+  padding: 4px 16px; /* Más espacio para el icono */
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.input-group.position-relative input.form-control {
+  border: none;
+  outline: none;
+  font-size: 1.2rem;
+  flex: 1;
+  background: transparent;
+  box-shadow: none;
+  padding-right: 36px; /* Espacio para el icono */
+}
+
+.input-icon {
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #555;
+  font-size: 1.5rem;
+  cursor: pointer;
+  background: #f0f0f0;
+  border-radius: 50%;
+  padding: 4px;
+  z-index: 2;
 }
 
 .league-card {
-    width: 100%;
-    height: 160px;
-    background: #fff;
-    border-radius: 12px;
-    padding: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  width: 100%;
+  height: 160px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .league-img {
-    max-height: 100%;
-    max-width: 100%;
-    object-fit: contain;
-    transition: transform 0.3s;
-    cursor: pointer;
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  transition: transform 0.3s;
+  cursor: pointer;
 }
 
 .league-img:hover {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 .league-title {
-    margin-top: 10px;
-    font-weight: 600;
+  margin-top: 10px;
+  font-weight: 600;
 }
 
 .z-3 {
@@ -114,4 +150,45 @@ body {
 
 .collapse .list-group-item {
   padding: 0.3rem 1rem;
+}
+
+/* RESULTADOS DE BUSQUEDA */
+#resultados-busqueda {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 8px 0;
+  margin-top: 8px;
+  max-width: 600px;
+  z-index: 10;
+}
+
+#resultados-busqueda .list-group-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+  background: #fff !important; /* Fondo SIEMPRE visible */
+  border: none;
+}
+
+#resultados-busqueda .list-group-item:hover {
+  background: #f0f4fa !important;
+}
+
+/* Scrollbar para tablas en el panel de administración */
+.table-responsive {
+    max-height: 400px; /* Ajusta la altura según lo que necesites */
+    overflow-y: auto;
+}
+
+/* Opcional: mejora el aspecto del scrollbar */
+.table-responsive::-webkit-scrollbar {
+    width: 8px;
+    background: #eee;
+}
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #bfc8d6;
+    border-radius: 4px;
 }

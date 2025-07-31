@@ -11,13 +11,12 @@
   <!-- Barra de navegación -->
   <nav class="navbar navbar-expand-lg" style="background-color: rgba(5,19,23,255)">
     <div class="container">
-      <img src="{% static 'img/LogotransferPlayer.png' %}" alt="Transfer Players Logo" class="logo" style="width:80px;">
+      <img src="{% static 'imagenes/LogotransferPlayer.png' %}" alt="Transfer Players Logo" class="logo" style="width:80px;">
       <a class="navbar-brand" href="#" style="color: antiquewhite; font-weight:600;">
         Transfer Players
       </a>
       <div class="collapse navbar-collapse justify-content-end">
-        <a href="home.html" class="btn btn-link" style="color: antiquewhite">Inicio</a>
-        <a href="{% url 'home' %}" class="btn btn-danger">Inicio</a>
+        <a href="{% url 'home' %}" class="btn btn-link" style="color: antiquewhite">Inicio</a>
       </div>
     </div>
   </nav>
@@ -32,10 +31,10 @@
       <div class="card-header d-flex justify-content-between align-items-center">
         <span class="h5">Jugadores</span>
         <div>
-          <select class="form-select d-inline-block w-auto me-2" id="filtroEstatus">
-            <option value="todos">Todos</option>
-            <option value="activos">Activos</option>
-            <option value="inactivos">Inactivos</option>
+          <select class="form-select d-inline-block w-auto me-2" id="filtroEstatus" onchange="filtrarPorEstatus()">
+            <option value="todos" {% if request.GET.estatus == "todos" or not request.GET.estatus %}selected{% endif %}>Todos</option>
+            <option value="activos" {% if request.GET.estatus == "activos" %}selected{% endif %}>Activos</option>
+            <option value="inactivos" {% if request.GET.estatus == "inactivos" %}selected{% endif %}>Inactivos</option>
           </select>
           <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalNuevoJugador">Agregar Jugador</button>
         </div>
@@ -61,19 +60,78 @@
                 <td>{{ jugador.nombre }}</td>
                 <td>{{ jugador.edad }}</td>
                 <td>{{ jugador.posicion }}</td>
-                <td>{{ jugador.valor_mercado }}</td>
+                <td>{{ jugador.valor_mercado }} mill. €</td>
                 <td>{{ jugador.equipo }}</td>
                 <td>{{ jugador.fecha_nacimiento }}</td>
-                <td>{{ jugador.estatus }}</td>
                 <td>
-                  <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalRegistrosJugador">Agregar Registros</button>
-                  <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalModificarJugador">Modificar</button>
-                  <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalDarDeBajaJugador">Dar de baja</button>
+                  {% if jugador.estatus == 1 %}
+                    <span class="badge bg-success">Activo</span>
+                  {% else %}
+                    <span class="badge bg-secondary">Inactivo</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalRegistrosJugador" data-id="{{ jugador.id }}">Agregar Registros</button>
+                  <button
+                    class="btn btn-primary btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalModificarJugador"
+                    data-id="{{ jugador.id }}"
+                    data-nombre="{{ jugador.nombre }}"
+                    data-edad="{{ jugador.edad }}"
+                    data-posicion="{{ jugador.posicion }}"
+                    data-valor="{{ jugador.valor_mercado }}"
+                    data-equipo="{{ jugador.equipo }}"
+                    data-fecha="{{ jugador.fecha_nacimiento }}">
+                    Modificar
+                  </button>
+                    {% if jugador.estatus == 1 %}
+                      <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalDarDeBajaJugador" data-id="{{ jugador.id }}">Dar de baja</button>
+                    {% else %}
+                      <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalDarDeAltaJugador" data-id="{{ jugador.id }}">Dar de alta</button>
+                    {% endif %}
                 </td>
               </tr>
               {% endfor %}
             </tbody>
           </table>
+          <nav>
+            <ul class="pagination justify-content-center">
+              {% if jugadores.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?estatus={{ request.GET.estatus|default:'todos' }}&page={{ jugadores.previous_page_number }}">Anterior</a>
+                </li>
+              {% endif %}
+
+              {% if jugadores.number > 3 %}
+                <li class="page-item">
+                  <a class="page-link" href="?estatus={{ request.GET.estatus|default:'todos' }}&page=1">1</a>
+                </li>
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+              {% endif %}
+
+              {% for num in jugadores.paginator.page_range %}
+                {% if num >= jugadores.number|add:'-2' and num <= jugadores.number|add:'2' %}
+                  <li class="page-item {% if jugadores.number == num %}active{% endif %}">
+                    <a class="page-link" href="?estatus={{ request.GET.estatus|default:'todos' }}&page={{ num }}">{{ num }}</a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+
+              {% if jugadores.number < jugadores.paginator.num_pages|add:'-2' %}
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+                <li class="page-item">
+                  <a class="page-link" href="?estatus={{ request.GET.estatus|default:'todos' }}&page={{ jugadores.paginator.num_pages }}">{{ jugadores.paginator.num_pages }}</a>
+                </li>
+              {% endif %}
+
+              {% if jugadores.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?estatus={{ request.GET.estatus|default:'todos' }}&page={{ jugadores.next_page_number }}">Siguiente</a>
+                </li>
+              {% endif %}
+            </ul>
+          </nav>
         </div>
       </div>
 
@@ -85,7 +143,7 @@
               <h5 class="modal-title" id="modalNuevoJugadorLabel">Agregar Nuevo Jugador</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-            <form method="POST">
+            <form method="POST" action="{% url 'agregar_jugador' %}" enctype="multipart/form-data">
               {% csrf_token %}
               <div class="modal-body row g-3">
                 <div class="col-md-6">
@@ -98,19 +156,33 @@
                 </div>
                 <div class="col-md-3">
                   <label class="form-label">Posición</label>
-                  <input type="text" name="posicion" class="form-control" required>
+                  <select name="posicion" class="form-select" required>
+                    <option value="Portero">Portero</option>
+                    <option value="Defensa">Defensa</option>
+                    <option value="Medio">Medio</option>
+                    <option value="Delantero">Delantero</option>
+                  </select>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label">Valor de Mercado</label>
+                  <label class="form-label">Valor de Mercado (mill. €)</label>
                   <input type="number" name="valor_mercado" class="form-control" required>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 position-relative">
                   <label class="form-label">Equipo</label>
-                  <input type="text" name="equipo" class="form-control" required>
+                  <input type="text" name="equipo" id="inputEquipo" class="form-control" autocomplete="off" required>
+                  <div id="resultadosEquipos" class="list-group position-absolute w-100 bg-white" style="z-index: 1000;"></div>
                 </div>
                 <div class="col-md-4">
                   <label class="form-label">Fecha de Nacimiento</label>
                   <input type="date" name="fecha_nacimiento" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Nacionalidad</label>
+                  <input type="text" name="nacionalidad" class="form-control" required>
+                </div>
+                <div class="col-md-8">
+                  <label class="form-label">Imagen del Jugador</label>
+                  <input type="file" name="imagen" accept="image/*" class="form-control" required>
                 </div>
               </div>
               <div class="modal-footer">
@@ -130,36 +202,42 @@
               <h5 class="modal-title" id="modalModificarJugadorLabel">Modificar Jugador</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-            <form method="POST">
+            <form method="POST" action="{% url 'modificar_jugador' %}">
               {% csrf_token %}
+              <input type="hidden" name="id_jugador" id="modificarIdJugador">
               <div class="modal-body row g-3">
                 <div class="col-md-6">
                   <label class="form-label">Nombre</label>
-                  <input type="text" name="nombre" class="form-control" required>
+                  <input type="text" name="nombre" id="modificarNombre" class="form-control" disabled>
                 </div>
                 <div class="col-md-3">
                   <label class="form-label">Edad</label>
-                  <input type="number" name="edad" class="form-control" required>
+                  <input type="number" name="edad" id="modificarEdad" class="form-control" required>
                 </div>
                 <div class="col-md-3">
                   <label class="form-label">Posición</label>
-                  <input type="text" name="posicion" class="form-control" required>
+                  <select name="posicion" id="modificarPosicion" class="form-select" required>
+                    <option value="Portero">Portero</option>
+                    <option value="Defensa">Defensa</option>
+                    <option value="Medio">Medio</option>
+                    <option value="Delantero">Delantero</option>
+                  </select>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">Valor de Mercado</label>
-                  <input type="number" name="valor_mercado" class="form-control" required>
+                  <input type="number" name="valor_mercado" id="modificarValor" class="form-control" required>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">Equipo</label>
-                  <input type="text" name="equipo" class="form-control" required>
+                  <input type="text" name="equipo" id="modificarEquipo" class="form-control" disabled>
                 </div>
                 <div class="col-md-4">
                   <label class="form-label">Fecha de Nacimiento</label>
-                  <input type="date" name="fecha_nacimiento" class="form-control" required>
+                  <input type="date" name="fecha_nacimiento" id="modificarFecha" class="form-control" disabled>
                 </div>
               </div>
               <div class="modal-footer">
-                <button type="submit" class="btn btn-success">Guardar Jugador</button>
+                <button type="submit" class="btn btn-success">Modificar Jugador</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
               </div>
             </form>
@@ -175,32 +253,28 @@
               <h5 class="modal-title" id="modalRegistrosJugador">Agregar Registros de Jugador</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-            <form method="POST">
+            <form method="POST" action="{% url 'agregar_registro_partido' %}">
               {% csrf_token %}
               <div class="modal-body row g-3">
-                <div class="col-md-6">
-                  <label class="form-label">Nombre</label>
-                  <input type="text" name="nombre" class="form-control" required>
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label">Edad</label>
-                  <input type="number" name="edad" class="form-control" required>
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label">Posición</label>
-                  <input type="text" name="posicion" class="form-control" required>
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Valor de Mercado</label>
-                  <input type="number" name="valor_mercado" class="form-control" required>
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">Equipo</label>
-                  <input type="text" name="equipo" class="form-control" required>
+                <input type="hidden" name="id_jugador" id="inputIdJugador">
+                <div class="col-md-4">
+                  <label class="form-label">Goles</label>
+                  <input type="number" name="goles" class="form-control" required>
                 </div>
                 <div class="col-md-4">
-                  <label class="form-label">Fecha de Nacimiento</label>
-                  <input type="date" name="fecha_nacimiento" class="form-control" required>
+                  <label class="form-label">Asistencias</label>
+                  <input type="number" name="asistencias" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Lesión</label>
+                  <select name="lesion" class="form-select" required>
+                    <option value="0">No</option>
+                    <option value="1">Sí</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Fecha</label>
+                  <input type="date" name="fecha" class="form-control" required>
                 </div>
               </div>
               <div class="modal-footer">
@@ -220,10 +294,33 @@
               <h5 class="modal-title" id="modalDarDeBajaJugador">Dar de baja un jugador</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-            <form method="POST">
+            <form method="POST" action="{% url 'dar_de_baja_jugador' %}">
+              {% csrf_token %}
+              <input type="hidden" name="id_jugador" id="bajaIdJugador">
               <label class="form-label">¿Seguro que quiere dar de baja al jugador?</label>
               <div class="modal-footer">
                 <button type="submit" class="btn btn-danger">Dar de baja a Jugador</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal para dar de alta un jugador -->
+      <div class="modal fade" id="modalDarDeAltaJugador" tabindex="-1" aria-labelledby="modalDarDeAltaJugador" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalDarDeAltaJugador">Dar de alta un jugador</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <form method="POST" action="{% url 'dar_de_alta_jugador' %}">
+              {% csrf_token %}
+              <input type="hidden" name="id_jugador" id="altaIdJugador">
+              <label class="form-label">¿Seguro que quiere dar de alta al jugador?</label>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-success">Dar de alta a Jugador</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
               </div>
             </form>
@@ -253,16 +350,16 @@
             </thead>
             <tbody>
               {% for solicitud in solicitudes %}
-                {% if solicitud.estatus == 'pendiente' %}
+                {% if solicitud.estatus == 'Pendiente' %}
                   <tr>
-                    <td>{{ solicitud.usuario.nombre }}</td>
-                    <td>{{ solicitud.jugador.nombre }}</td>
-                    <td>{{ solicitud.texto }}</td>
+                    <td>{{ solicitud.usuario }}</td>
+                    <td>{{ solicitud.jugador }}</td>
+                    <td>{{ solicitud.mensaje }}</td>
                     <td>{{ solicitud.fecha }}</td>
                     <td><span class="badge bg-warning text-dark">Pendiente</span></td>
                     <td>
                       <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalResponderSolicitud{{ solicitud.id }}">Contestar</button>
-                      <form action="{% url 'rechazar_solicitud' solicitud.id %}" method="POST" class="d-inline">
+                      <form method="POST" class="d-inline">
                         {% csrf_token %}
                         <button class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que quieres rechazar esta solicitud?')">Rechazar</button>
                       </form>
@@ -277,7 +374,7 @@
                           <h5 class="modal-title" id="modalResponderLabel{{ solicitud.id }}">Responder Solicitud</h5>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                         </div>
-                        <form action="{% url 'responder_solicitud' solicitud.id %}" method="POST">
+                        <form method="POST">
                           {% csrf_token %}
                           <div class="modal-body">
                             <p><strong>Usuario:</strong> {{ solicitud.usuario.nombre }}</p>
@@ -306,6 +403,39 @@
               {% endif %}
             </tbody>
           </table>
+          <nav>
+            <ul class="pagination justify-content-center">
+              {% if solicitudes.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ solicitudes.previous_page_number }}">Anterior</a>
+                </li>
+              {% endif %}
+
+              {% if solicitudes.number > 3 %}
+                <li class="page-item"><a class="page-link" href="?page=1">1</a></li>
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+              {% endif %}
+
+              {% for num in solicitudes.paginator.page_range %}
+                {% if num >= solicitudes.number|add:'-2' and num <= solicitudes.number|add:'2' %}
+                  <li class="page-item {% if solicitudes.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+
+              {% if solicitudes.number < solicitudes.paginator.num_pages|add:'-2' %}
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+                <li class="page-item"><a class="page-link" href="?page={{ solicitudes.paginator.num_pages }}">{{ solicitudes.paginator.num_pages }}</a></li>
+              {% endif %}
+
+              {% if solicitudes.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ solicitudes.next_page_number }}">Siguiente</a>
+                </li>
+              {% endif %}
+            </ul>
+          </nav>
         </div>
       </div>
     </div>
@@ -354,7 +484,7 @@
                 <td>{{ usuario.fecha_registro }}</td>
                 <td>
                   <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalModificarUsuario{{ usuario.id_usuario }}">Modificar</button>
-                  <form action="{% url 'eliminar_usuario' usuario.id_usuario %}" method="POST" class="d-inline">
+                  <form method="POST" class="d-inline">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Estás seguro que deseas eliminar este usuario?')">Eliminar</button>
                   </form>
@@ -369,7 +499,7 @@
                       <h5 class="modal-title" id="modalModificarUsuarioLabel{{ usuario.id_usuario }}">Modificar Usuario</h5>
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                     </div>
-                    <form action="{% url 'modificar_usuario' usuario.id_usuario %}" method="POST">
+                    <form method="POST">
                       {% csrf_token %}
                       <div class="modal-body row g-3">
                         <div class="col-md-6">
@@ -418,6 +548,39 @@
               {% endif %}
             </tbody>
           </table>
+          <nav>
+            <ul class="pagination justify-content-center">
+              {% if usuarios.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ usuarios.previous_page_number }}">Anterior</a>
+                </li>
+              {% endif %}
+
+              {% if usuarios.number > 3 %}
+                <li class="page-item"><a class="page-link" href="?page=1">1</a></li>
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+              {% endif %}
+
+              {% for num in usuarios.paginator.page_range %}
+                {% if num >= usuarios.number|add:'-2' and num <= usuarios.number|add:'2' %}
+                  <li class="page-item {% if usuarios.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+
+              {% if usuarios.number < usuarios.paginator.num_pages|add:'-2' %}
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+                <li class="page-item"><a class="page-link" href="?page={{ usuarios.paginator.num_pages }}">{{ usuarios.paginator.num_pages }}</a></li>
+              {% endif %}
+
+              {% if usuarios.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ usuarios.next_page_number }}">Siguiente</a>
+                </li>
+              {% endif %}
+            </ul>
+          </nav>
         </div>
       </div>
 
@@ -429,7 +592,7 @@
               <h5 class="modal-title" id="modalAgregarUsuarioLabel">Agregar Nuevo Usuario</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-            <form method="POST" action="{% url 'agregar_usuario' %}">
+            <form method="POST">
               {% csrf_token %}
               <div class="modal-body row g-3">
                 <div class="col-md-6">
@@ -477,7 +640,25 @@
 
   </div>
 
+  {% if messages %}
+    <div aria-live="polite" aria-atomic="true" class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+      {% for message in messages %}
+        <div class="toast align-items-center text-white {% if message.tags == 'success' %}bg-success{% else %}bg-danger{% endif %} border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3500">
+          <div class="d-flex">
+            <div class="toast-body">
+              {{ message }}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
   <!-- Scripts de Bootstrap -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="{% static 'js/scripts.js' %}"></script>
+  <br><br><br><br><br>
 </body>
 </html>

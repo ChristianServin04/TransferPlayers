@@ -30,15 +30,7 @@ def conectar():
         print("Error de conexión:", e)
         return None
 
-def grafica_base64(fig):
-    buffer = io.BytesIO()
-    plt.savefig(buffer, format='png')
-    plt.close(fig)
-    buffer.seek(0)
-    imagen_png = buffer.getvalue()
-    buffer.close()
-    return base64.b64encode(imagen_png).decode('utf-8')
-
+# Gráficas nivel táctico
 def obtener_datos_edad_equipo():
     conexion = conectar()
     if not conexion:
@@ -61,7 +53,6 @@ def obtener_datos_edad_equipo():
     conexion.close()
     return {"equipos": equipos, "edades": edades}
 
-
 def obtener_datos_nacionalidades(top_n=7):
     conexion = conectar()
     if not conexion:
@@ -81,8 +72,6 @@ def obtener_datos_nacionalidades(top_n=7):
     labels = [fila[0] for fila in resultados]
     values = [fila[1] for fila in resultados]
     return {"labels": labels, "values": values}
-
-
 
 def obtener_datos_valor_liga():
     conexion = conectar()
@@ -105,7 +94,6 @@ def obtener_datos_valor_liga():
     valores = [fila[1] for fila in resultados]
     return {"ligas": ligas, "valores": valores}
 
-
 def obtener_datos_top_usuarios():
     conexion = conectar()
     if not conexion:
@@ -127,3 +115,63 @@ def obtener_datos_top_usuarios():
     solicitudes = [fila[1] for fila in resultados]
     return {"usuarios": usuarios, "solicitudes": solicitudes}
 
+# Gráficas nivel estratégico
+def obtener_promedio_valor_posicion():
+    conexion = conectar()
+    if not conexion:
+        return {}
+    cursor = conexion.cursor()
+    cursor.execute("SELECT * FROM public.promedioposicion();")
+    resultados = cursor.fetchall()
+    cursor.close()
+    conexion.close()
+
+    posiciones = [fila[0] for fila in resultados]
+    valores = [float(fila[1]) for fila in resultados]
+    return {"posiciones": posiciones, "valores": valores}
+
+
+def obtener_distribucion_anio_nacimiento():
+    conexion = conectar()
+    if not conexion:
+        return {}
+    cursor = conexion.cursor()
+    cursor.execute("SELECT * FROM public.promedio_anio_jugador();")
+    resultados = cursor.fetchall()
+    cursor.close()
+    conexion.close()
+
+    anios = [int(fila[0]) for fila in resultados]
+    total = [int(fila[1]) for fila in resultados]
+    return {"anios": anios, "total": total}
+
+
+def obtener_valor_mercado_por_liga():
+    conexion = conectar()
+    if not conexion:
+        return {}
+    cursor = conexion.cursor()
+    cursor.execute("SELECT * FROM public.valor_mercado_por_liga();")
+    resultados = cursor.fetchall()
+    cursor.close()
+    conexion.close()
+
+    ligas = [fila[0] for fila in resultados]
+    valores = [float(fila[1]) for fila in resultados]
+    return {"ligas": ligas, "valores": valores}
+
+
+def obtener_promedio_permanencia_equipo():
+    conexion = conectar()
+    if not conexion:
+        return {}
+    cursor = conexion.cursor()
+    cursor.execute("SELECT * FROM public.promedio_permanencia_equipos();")
+    resultados = cursor.fetchall()
+    cursor.close()
+    conexion.close()
+
+    equipos = [fila[0] for fila in resultados]
+    promedio = [float(fila[1]) for fila in resultados]
+    print(equipos, promedio)
+    return {"equipos": equipos, "promedio": promedio}

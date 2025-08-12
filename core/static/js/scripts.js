@@ -469,7 +469,7 @@ function renderChart(tipo, data) {
             data: {
                 labels: data.ligas,
                 datasets: [{
-                    label: 'Valor Promedio (€)',
+                    label: 'Valor Promedio (mill. €)',
                     data: data.valores,
                     borderColor: 'green',
                     fill: false
@@ -488,10 +488,99 @@ function renderChart(tipo, data) {
                 }]
             }
         };
+    } else if (tipo === "promedio_valor_posicion") {
+        config = {
+            type: 'bar',
+            data: {
+                labels: data.posiciones,
+                datasets: [{
+                    label: 'Valor Promedio (mill. €)',
+                    data: data.valores,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)'
+                }]
+            },
+            options: {
+                indexAxis: 'y'
+            }
+        };
+    } else if (tipo === "distribucion_anio_nacimiento") {
+        config = {
+            type: 'bar',
+            data: {
+                labels: data.anios,
+                datasets: [{
+                    label: 'Cantidad de jugadores',
+                    data: data.total,
+                    backgroundColor: 'rgba(255, 206, 86, 0.6)'
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        ticks: {
+                            autoSkip: false,
+                            maxRotation: 90,
+                            minRotation: 45
+                        }
+                    }
+                }
+            }
+        };
+    } else if (tipo === "valor_mercado_liga") {
+        config = {
+            type: 'pie',
+            data: {
+                labels: data.ligas,
+                datasets: [{
+                    label: "Valor (mill. €)",
+                    data: data.valores,
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        };
+    } else if (tipo === "promedio_permanencia") {
+        config = {
+            type: 'line',
+            data: {
+                labels: data.equipos,
+                datasets: [{
+                    label: 'Promedio de años',
+                    data: data.promedio,
+                    borderColor: 'rgba(0, 128, 0, 0.7)',
+                    fill: false,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        ticks: {
+                            autoSkip: false,
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
     }
 
     chartInstance = new Chart(ctx, config);
 }
+
 
 
 function buscarJugadoresDinamico() {
@@ -648,4 +737,14 @@ document.addEventListener('DOMContentLoaded', function() {
       resultados.innerHTML = '';
     }
   });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+const hash = window.location.hash;
+if (hash) {
+    const tabTrigger = document.querySelector(`a[href="${hash}"]`);
+    if (tabTrigger) {
+    new bootstrap.Tab(tabTrigger).show();
+    }
+}
 });

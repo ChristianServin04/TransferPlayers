@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gráficas Nivel Estratégico</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        #canvas-container {
+            max-width: 900px;
+            margin: auto;
+            overflow-x: auto;
+        }
+
+        #grafico {
+            width: 100% !important;
+            max-height: 400px;
+            aspect-ratio: 3 / 2;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg" style="background-color:rgba(5,19,23,255);">
+        <div class="container">
+        <img src="{% static 'imagenes/LogoTransferPlayer.png' %}" alt="Transfer Players Logo" class="logo" style="width:80px;">
+        <a class="navbar-brand" href="{% url 'home' %}" style="color: antiquewhite; font-weight: 600;">Transfer Players</a>
+        </div>
+    </nav>
+
+    <div class="container mt-5 bg-white p-4 shadow rounded" style="max-width: 960px;">
+        <h3 class="mb-4">Visualización de Reportes Estratégicos</h3>
+
+        <div class="row align-items-end mb-4">
+            <!-- Select de tipo de reporte -->
+            <div class="col-md-6">
+                <label for="tipo_reporte" class="form-label">Selecciona un reporte:</label>
+                <select id="tipo_reporte" class="form-select">
+                    <option value="">-- Selecciona --</option>
+                    <option value="promedio_valor_posicion">Promedio de valor por posición</option>
+                    <option value="distribucion_anio_nacimiento">Distribución jugadores por año de nacimiento</option>
+                    <option value="valor_mercado_liga">Valor de mercado por liga</option>
+                    <option value="promedio_permanencia">Promedio de permanencia por equipo</option>
+                </select>
+            </div>
+
+            <!-- Botón -->
+            <div class="col-md-3">
+                <button id="btn-generar" class="btn btn-primary w-100">Buscar</button>
+            </div>
+        </div>
+
+        <div id="canvas-container">
+            <canvas id="grafico"></canvas>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'js/scripts.js' %}"></script>
+</body>
+</html>

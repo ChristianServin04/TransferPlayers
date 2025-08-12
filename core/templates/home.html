@@ -27,7 +27,10 @@
 
       <ul class="list-group list-group-flush">
         <li class="list-group-item"><a href="{% url 'home' %}" class="sidebar-link">Inicio</a></li>
-        <li class="list-group-item"><a href="{% url 'admin_panel' %}" class="sidebar-link">Panel de Administrador</a></li>
+        
+        {% if request.session.id_usuario and request.session.tipo_usuario == "Admin" %}
+          <li class="list-group-item"><a href="{% url 'admin_panel' %}" class="sidebar-link">Panel de Administrador</a></li>
+        {% endif %}
 
         <!-- Reportes con submenú -->
         <li class="list-group-item">
@@ -41,6 +44,7 @@
               <li class="list-group-item"><a href="{% url 'usuarios_registrados' %}" class="sidebar-sublink">Reporte de Usuarios</a></li>
               <li class="list-group-item"><a href="{% url 'reporte_semanal' %}" class="sidebar-sublink">Reporte Semanal</a></li>
               <li class="list-group-item"><a href="{% url 'graficas_tactico' %}" class="sidebar-sublink">Gráficos Nivel Táctico</a></li>
+              <li class="list-group-item"><a href="{% url 'graficas_estrategico' %}" class="sidebar-sublink">Gráficos Nivel Estratégico</a></li>
             </ul>
           </div>
         </li>
@@ -59,9 +63,24 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li>
-            <a class="nav-link" href="{% url 'login' %}" style="color: antiquewhite; font-weight: 600;">Iniciar Sesión</a>
-          </li>
+          {% if request.session.nombre_usuario %}
+            <li class="nav-item">
+              <span class="nav-link" style="color: antiquewhite; font-weight: 600;">
+                ¡Hola, {{ request.session.nombre_usuario }}!
+              </span>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}" style="color: antiquewhite; font-weight: 600;">
+                Cerrar sesión
+              </a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'login' %}" style="color: antiquewhite; font-weight: 600;">
+                Iniciar Sesión
+              </a>
+            </li>
+          {% endif %}
         </ul>
       </div>
     </div>
@@ -161,6 +180,37 @@
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div aria-live="polite" aria-atomic="true" class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+    <div id="toast-messages">
+      {% if messages %}
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          {% for message in messages %}
+            var toastHTML = `
+              <div class="toast align-items-center text-bg-{{ message.tags }} border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3500">
+                <div class="d-flex">
+                  <div class="toast-body">
+                    {{ message|escapejs }}
+                  </div>
+                  <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+              </div>
+            `;
+            var toastContainer = document.getElementById('toast-messages');
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+          {% endfor %}
+          var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+          toastElList.map(function(toastEl) {
+            var toast = new bootstrap.Toast(toastEl);
+            toast.show();
+          });
+        });
+      </script>
+    {% endif %}
     </div>
   </div>
 

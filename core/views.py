@@ -4,21 +4,147 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 import psycopg2
 from datetime import datetime
-from .graficas import (obtener_datos_edad_equipo, obtener_datos_nacionalidades, obtener_datos_valor_liga, obtener_datos_top_usuarios)
+from .graficas import (
+    obtener_datos_edad_equipo, 
+    obtener_datos_nacionalidades, 
+    obtener_datos_valor_liga, 
+    obtener_datos_top_usuarios, 
+    obtener_promedio_valor_posicion,
+    obtener_distribucion_anio_nacimiento,
+    obtener_valor_mercado_por_liga,
+    obtener_promedio_permanencia_equipo)
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.conf import settings
+import hashlib
+from datetime import datetime
+from django.urls import reverse
+import re
 
 def home_view(request):
     return render(request, 'home.html')
 
 def login_view(request):
-    return render(request, 'login.html')
+    if request.method == "POST":
+        correo = request.POST['email']
+        password = request.POST['password']
+
+        conexion = conectar()
+        cursor = conexion.cursor()
+        cursor.execute("""
+            SELECT id_usuario, nombre, tipo_usuario FROM usuarios
+            WHERE correo = %s AND contrasena = %s AND status = 1
+        """, (correo, password))
+        usuario = cursor.fetchone()
+        cursor.close()
+        conexion.close()
+
+        # Si la petición es AJAX, responde con JSON
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            if usuario:
+                request.session['id_usuario'] = usuario[0]
+                request.session['nombre_usuario'] = usuario[1]
+                request.session['tipo_usuario'] = usuario[2]
+                return JsonResponse({'success': True, 'redirect_url': reverse('home')})
+            else:
+                return JsonResponse({'success': False, 'error': 'Correo o contraseña incorrectos.'})
+
+        # Si no es AJAX, responde como antes
+        if usuario:
+            request.session['id_usuario'] = usuario[0]
+            request.session['nombre_usuario'] = usuario[1]
+            request.session['tipo_usuario'] = usuario[2]
+            messages.success(request, f"Bienvenido(a), {usuario[1]}")
+            print("Correo recibido:", correo)
+            print("Password recibido:", password)
+            print("Resultado de consulta:", usuario)
+            return redirect("home")
+        else:
+            messages.error(request, "Correo o contraseña incorrectos.")
+            print("Correo recibido:", correo)
+            print("Password recibido:", password)
+            print("Resultado de consulta:", usuario)
+            return redirect("login")
+
+    return render(request, "login.html")
+
 
 def register_view(request):
-    return render(request, 'register.html')
+    if request.method == "POST":
+        nombre = request.POST.get('nombre', '').strip()
+        correo = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '')
+        confirm_password = request.POST.get('confirm-password', '')
+
+        # Validaciones
+        if not nombre or not correo or not password or not confirm_password:
+            error = "Todos los campos son obligatorios."
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': error})
+            messages.error(request, error)
+            return redirect("register")
+
+        if password != confirm_password:
+            error = "Las contraseñas no coinciden."
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': error})
+            messages.error(request, error)
+            return redirect("register")
+
+        if len(password) < 8:
+            error = "La contraseña debe tener al menos 8 caracteres."
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': error})
+            messages.error(request, error)
+            return redirect("register")
+        
+        # Validación de caracteres permitidos en la contraseña
+        if ' ' in password or not re.match(r'^[A-Za-z0-9@#$%^&+=!._-]+$', password):
+            error = "La contraseña no debe contener espacios ni caracteres no permitidos."
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': error})
+            messages.error(request, error)
+            return redirect("login")
+
+        conexion = conectar()
+        cursor = conexion.cursor()
+        cursor.execute("SELECT * FROM usuarios WHERE correo = %s", (correo,))
+        if cursor.fetchone():
+            cursor.close()
+            conexion.close()
+            error = "El correo ya está registrado."
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': error})
+            messages.error(request, error)
+            return redirect("register")
+
+        tipo_usuario = "Directivo"
+        status = 1
+        fecha_registro = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        cursor.execute("""
+            INSERT INTO usuarios (nombre, correo, contrasena, tipo_usuario, status, fecha_registro)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (nombre, correo, password, tipo_usuario, status, fecha_registro))
+
+        conexion.commit()
+        cursor.close()
+        conexion.close()
+
+        success = "Registro exitoso. Ya puedes iniciar sesión."
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': True, 'redirect_url': '/login/', 'message': success})
+        messages.success(request, success)
+        return redirect("login")
+
+    return render(request, "register.html")
+
+def logout_view(request):
+    request.session.flush()
+    messages.success(request, "Sesión cerrada correctamente.")
+    return redirect("login")
 
 def player_view(request):
     return render(request, 'player.html')
@@ -37,6 +163,9 @@ def reporte_semanal(request):
 
 def vista_graficas(request):
     return render(request, 'graficas_tactico.html')
+
+def vista_graficas2(request):
+    return render(request, 'graficas_estrategico.html')
 
 @require_GET
 def obtener_jugadores_por_equipo(request):
@@ -113,8 +242,9 @@ def player_view(request, id):
         if not jugador_row:
             return render(request, "player.html", {"player": None})
 
-        # Diccionario base del jugador
+        # Diccionario base del jugador, ahora incluye el id
         jugador = {
+            "id": id,                          # <-- Agrega el id aquí
             "imagen": jugador_row[0],          # dj.foto
             "nombre": jugador_row[1],          # j.nombre
             "equipo": jugador_row[2],          # e.nombre
@@ -155,10 +285,40 @@ def player_view(request, id):
 
     except Exception as e:
         messages.error(request, f"Error al obtener datos del jugador: {e}")
-
         print("Jugador:", jugador)
-
         return render(request, "player.html", {"player": None})
+    
+def solicitud_info_view(request):
+    if request.method == "POST" and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        id_usuario = request.session.get('id_usuario')
+        id_jugador = request.POST.get('id_jugador')
+        mensaje = request.POST.get('mensaje', '').strip()
+        estado = "Pendiente"
+        fecha_solicitud = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        print(f"id_usuario: {id_usuario}, id_jugador: {id_jugador}, mensaje: {mensaje}")
+
+        # Validar si el usuario está logueado
+        if not id_usuario:
+            return JsonResponse({'success': False, 'error': 'Debes iniciar sesión para realizar una solicitud.'})
+
+        # Validar datos completos
+        if not id_jugador or not mensaje:
+            return JsonResponse({'success': False, 'error': 'Datos incompletos.'})
+
+
+        conexion = conectar()
+        cursor = conexion.cursor()
+        cursor.execute("""
+            INSERT INTO solicitudes_info (id_usuario, id_jugador, mensaje, estado, fecha_solicitud)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (id_usuario, id_jugador, mensaje, estado, fecha_solicitud))
+        conexion.commit()
+        cursor.close()
+        conexion.close()
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': False, 'error': 'Método no permitido.'})
 
 
 def conectar():
@@ -319,26 +479,46 @@ def obtener_solicitudes_semanales(request):
         print("Error en la consulta semanal:", e)
         return JsonResponse([], safe=False)
 
+from django.http import JsonResponse
+
 def reporte_datos(request, tipo):
     if tipo == "nacionalidades":
         top_n = request.GET.get("top_n", 7)
         try:
             top_n = int(top_n)
-            if top_n < 1 or top_n > 50:  # opcional: límite superior
+            if top_n < 1 or top_n > 50:
                 top_n = 7
         except ValueError:
             top_n = 7
         datos = obtener_datos_nacionalidades(top_n)
+
     elif tipo == "edad_equipo":
         datos = obtener_datos_edad_equipo()
+
     elif tipo == "valor_liga":
         datos = obtener_datos_valor_liga()
+
     elif tipo == "top_usuarios":
         datos = obtener_datos_top_usuarios()
+
+    # Nuevos reportes estratégicos
+    elif tipo == "promedio_valor_posicion":
+        datos = obtener_promedio_valor_posicion()
+
+    elif tipo == "distribucion_anio_nacimiento":
+        datos = obtener_distribucion_anio_nacimiento()
+
+    elif tipo == "valor_mercado_liga":
+        datos = obtener_valor_mercado_por_liga()
+
+    elif tipo == "promedio_permanencia":
+        datos = obtener_promedio_permanencia_equipo()
+
     else:
         datos = {}
 
     return JsonResponse(datos)
+
 
 def obtener_jugadores_bd():
     conexion = conectar()
@@ -417,26 +597,31 @@ def obtener_usuarios_bd():
 
 def admin_panel(request):
     estatus = request.GET.get('estatus', 'todos')
+
+    # --- Jugadores ---
     jugadores_list = obtener_jugadores_bd()
     if estatus == 'activos':
         jugadores_list = [j for j in jugadores_list if str(j['estatus']) == '1']
     elif estatus == 'inactivos':
         jugadores_list = [j for j in jugadores_list if str(j['estatus']) == '0']
-    elif estatus == 'todos':
-        # No filtra, muestra todos
-        pass
+    # 'todos' no filtra
+
     page_number_j = request.GET.get('page', 1)
-    paginator_j = Paginator(jugadores_list, 10)  # 10 jugadores por página
+    paginator_j = Paginator(jugadores_list, 10)
     jugadores = paginator_j.get_page(page_number_j)
 
+    # --- Solicitudes pendientes ---
     solicitudes_list = obtener_solicitudes_bd()
+    solicitudes_pendientes = [s for s in solicitudes_list if s["estatus"].lower() == "pendiente"]
+    
     page_number_s = request.GET.get('page_solicitudes', 1)
-    paginator_s = Paginator(solicitudes_list, 10)  # 10 solicitudes por página
+    paginator_s = Paginator(solicitudes_pendientes, 10)
     solicitudes = paginator_s.get_page(page_number_s)
 
+    # --- Usuarios ---
     usuarios_list = obtener_usuarios_bd()
     page_number_u = request.GET.get('page_usuarios', 1)
-    paginator_u = Paginator(usuarios_list, 10)  # 10 usuarios por página
+    paginator_u = Paginator(usuarios_list, 10)
     usuarios = paginator_u.get_page(page_number_u)
 
     return render(request, 'admin_panel.html', {
@@ -632,3 +817,52 @@ def buscar_equipos(request):
     conexion.close()
     resultados = [nombre for (nombre,) in equipos]
     return JsonResponse(resultados, safe=False)
+
+def actualizar_solicitud(request, solicitud_id):
+    accion = request.POST.get("accion")
+    
+    if accion not in ["aprobar", "rechazar"]:
+        messages.error(request, "Acción no válida.")
+        return redirect("admin_view")  # O el nombre que tengas en urls.py para admin_panel
+
+    nuevo_estado = "Aprobada" if accion == "aprobar" else "Rechazada"
+
+    try:
+        conexion = conectar()
+        cursor = conexion.cursor()
+        cursor.execute("""
+            UPDATE solicitudes_info
+            SET estado = %s
+            WHERE id_solicitud = %s
+        """, (nuevo_estado, solicitud_id))
+        conexion.commit()
+        cursor.close()
+        conexion.close()
+        messages.success(request, f"Solicitud marcada como {nuevo_estado}.")
+    except Exception as e:
+        messages.error(request, "Ocurrió un error al actualizar la solicitud.")
+        print("Error actualizando solicitud:", e)
+
+    return redirect("admin_panel")  
+
+# def enviar_solicitud(request, jugador_id):
+#     if request.method == "POST":
+#         mensaje = request.POST.get("mensaje")
+#         usuario_id = request.session.get("id_usuario")  # ajusta esto según cómo guardes el usuario
+
+#         if not usuario_id:
+#             messages.error(request, "Debes iniciar sesión para enviar una solicitud.")
+#             return redirect("login")  # o la vista correspondiente
+
+#         conexion = conectar()
+#         cursor = conexion.cursor()
+#         cursor.execute("""
+#             INSERT INTO solicitudes_info (id_usuario, id_jugador, mensaje, fecha_solicitud, estado)
+#             VALUES (%s, %s, %s, CURRENT_DATE, 'Pendiente')
+#         """, (usuario_id, jugador_id, mensaje))
+#         conexion.commit()
+#         cursor.close()
+#         conexion.close()
+
+#         messages.success(request, "Tu solicitud fue enviada correctamente.")
+#         return redirect("player", jugador_id=jugador_id)

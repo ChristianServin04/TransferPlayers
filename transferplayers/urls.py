@@ -23,7 +23,9 @@ urlpatterns = [
     path('', views.home_view, name='home'),
     path('login/', views.login_view, name='login'),
     path('register/', views.register_view, name='register'),
+    path('logout/', views.logout_view, name='logout'),
     path("jugador/<int:id>/", views.player_view, name="jugador"),
+    path('solicitud_info/', views.solicitud_info_view, name='solicitud_info'),
     path('admin/', admin.site.urls),
     path('obtener_jugadores_por_equipo/', views.obtener_jugadores_por_equipo, name='obtener_jugadores_por_equipo'),
     path("buscar_jugadores/", views.buscar_jugadores, name="buscar_jugadores"),
@@ -36,6 +38,7 @@ urlpatterns = [
     path('reporte_semanal/', views.reporte_semanal, name='reporte_semanal'),
     path('obtener_solicitudes_semanales/', views.obtener_solicitudes_semanales, name='obtener_solicitudes_semanales'),
     path('graficas_tactico/', views.vista_graficas, name='graficas_tactico'),
+    path('graficas_estrategico/', views.vista_graficas2, name='graficas_estrategico'),
     path('reporte_datos/<str:tipo>/', views.reporte_datos, name='reporte_datos'),
     path('admin_panel/', views.admin_panel, name='admin_panel'),
     path('agregar_registro_partido/', views.agregar_registro_partido, name='agregar_registro_partido'),
@@ -44,4 +47,5 @@ urlpatterns = [
     path('dar_de_alta_jugador/', views.dar_de_alta_jugador, name='dar_de_alta_jugador'),
     path('buscar_equipos/', views.buscar_equipos, name='buscar_equipos'),
     path('agregar_jugador/', views.agregar_jugador, name='agregar_jugador'),
+    path('actualizar_solicitud/<int:solicitud_id>/', views.actualizar_solicitud, name='actualizar_solicitud'),
 ]

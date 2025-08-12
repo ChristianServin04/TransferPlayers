@@ -82,5 +82,112 @@
 
     </div>
 
+    <!-- Toast de información -->
+    <div aria-live="polite" aria-atomic="true" class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+    <div id="info-toast"></div>
+    </div>
+
+    <!-- Modal para solicitud -->
+    <div class="modal fade" id="solicitudModal" tabindex="-1" aria-labelledby="solicitudModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="solicitud-form" class="modal-content">
+            {% csrf_token %}
+            <div class="modal-header">
+                <h5 class="modal-title" id="solicitudModalLabel">Solicitar información de {{ player.nombre }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                <input type="hidden" id="id_jugador" name="id_jugador" value="{{ player.id }}">
+                <label for="mensaje" class="form-label">Mensaje</label>
+                <textarea class="form-control" id="mensaje" name="mensaje" rows="3" placeholder="¿Qué información deseas saber?" required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Enviar solicitud</button>
+            </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Mostrar el toast al cargar la página
+    var toastHTML = `
+        <div class="toast align-items-center text-bg-info border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="8000">
+        <div class="d-flex">
+            <div class="toast-body">
+            ¿Quieres saber más información de este jugador?
+            <button id="btn-solicitar-info" class="btn btn-sm btn-light ms-2">Mandar solicitud</button>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+        </div>
+        </div>
+    `;
+    var toastContainer = document.getElementById('info-toast');
+    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+    var toastEl = toastContainer.lastElementChild;
+    var toast = new bootstrap.Toast(toastEl);
+    toast.show();
+
+    // Abrir el modal al dar click en el botón del toast
+    toastEl.querySelector('#btn-solicitar-info').addEventListener('click', function() {
+        var modal = new bootstrap.Modal(document.getElementById('solicitudModal'));
+        modal.show();
+    });
+
+    // Enviar la solicitud por AJAX
+    document.getElementById('solicitud-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const data = new FormData(form);
+        data.append('id_jugador', '{{ player.id }}');
+        // id_usuario lo puedes obtener del contexto de sesión en la vista o en el backend
+
+        const response = await fetch("{% url 'solicitud_info' %}", {
+        method: 'POST',
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        body: data
+        });
+        const result = await response.json();
+        if (result.success) {
+        // Cierra el modal y muestra un toast de éxito
+        bootstrap.Modal.getInstance(document.getElementById('solicitudModal')).hide();
+        var toastSuccess = `
+            <div class="toast align-items-center text-bg-success border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3500">
+            <div class="d-flex">
+                <div class="toast-body">
+                ¡Solicitud enviada correctamente!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+            </div>
+            </div>
+        `;
+        toastContainer.insertAdjacentHTML('beforeend', toastSuccess);
+        var toastEl2 = toastContainer.lastElementChild;
+        var toast2 = new bootstrap.Toast(toastEl2);
+        toast2.show();
+        form.reset();
+        } else {
+            var toastHTML = `
+            <div class="toast align-items-center text-bg-danger border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3500">
+                <div class="d-flex">
+                <div class="toast-body">
+                    ${result.error || "Error al enviar la solicitud."}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+                </div>
+            </div>
+            `;
+            var toastContainer = document.getElementById('info-toast');
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+            var toastEl = toastContainer.lastElementChild;
+            var toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+    });
+    });
+    </script>
 </body>
 </html>
